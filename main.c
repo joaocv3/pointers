@@ -1,29 +1,88 @@
+João Carlos
+1
+
+
+Pesquisar no Google Drive
+
+Drive
+.
+Caminho da pasta
+Meu Drive
+UCS
+programação II
+trabalho
+NOVO 
+Pastas e visualizações
+Meu Drive
+Compartilhados comigo
+Google Fotos
+Recentes
+Com estrela
+Lixeira
+86 GB de 100 GB usados
+Fazer upgrade do armazenamento
+.
+
+C
+filmes.c
+
+PDF
+Especificacao do Trabalho - 2016-2 (1).pdf
+C
+filmes.c
+Detalhes
+Atividade
+filmes.c
+Informações de compartilhamento
+
+Informações gerais
+Tipo
+C
+Tamanho
+4 KB (4.545 bytes)
+Armazenamento usado
+4 KB (4.545 bytes)
+Local
+trabalho
+Proprietário
+eu
+Modificado
+em 12 de mai de 2016 por mim
+Aberto
+em 10:32 por mim
+Criado em
+12 de mai de 2016
+Descrição
+Adicionar uma descrição
+Permissões de download
+Os leitores podem fazer o download
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 typedef struct nodoAtoresFilmes{struct nodoAtores*nome;struct nodoAtoresFilmes *prox;} AtoresFilmes; 
-typedef struct nodoFilmes{char NomeFilmes[50]; int ano; char Diretores[150]; struct nodoFilmes *prox; struct nodoFilmes *ant;; struct nodoAtoresFilmes *atores;} Filmes;
+typedef struct nodoFilmes{char NomeFilmes[50]; int ano; char Diretores[150]; struct nodoFilmes *prox; struct nodoFilmes *ant; struct nodoAtoresFilmes *atores;} Filmes;
 typedef struct nodoAtores{char NomeAtor[50];struct nodoAtores *prox; struct nodoAtores *ant; struct nodoFilmes *filmes;} Atores;
 
 int menu();
-int leitura(Filmes **inicio, Filmes **fim, Atores **inicio, Atores **fim);
-void insercaoOrdenada(Filmes **inicio, Filmes **fim, Atores **inicio, Atores **fim, char FilmesOuAtores?, char ValorASerInserido[600]);
-int PesquisaNasStructs(Filmes **inicio, Atores **inicio, char ValorPesquisa[200], char FilmeAnoDiretorNome?);
+int leitura(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA);
+void insercaoOrdenada(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, char ValorASerInserido[600]);
+int PesquisaNasStructs(Filmes **inicioF, Atores **inicioA, char ValorPesquisa[200], char FilmeAnoDiretorNome);
 
 int main()
 {
 	
-	int escolha = menu();
+	int escolha = menu(); 
 	if(escolha!=0)
 	{
 		Filmes *inicioF = NULL, *fimF = NULL;
 		Atores *inicioA = NULL, *fimA = NULL;
-		while(leitura(&inicioF, &FimF, &inicioA, &inicioF)==0)
+		if((leitura(&inicioF, &fimF, &inicioA, &fimA))==0)
 		{
 			printf("\n Erro! Arquivo não encontrado. \n");
 			printf("Insira o arquivo no diretorio especifico e tente novamente. \n");
-			system("pause");
+			return; // Encerra o programa
 		}
 		
 	}
