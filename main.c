@@ -148,29 +148,28 @@ int menu()
 	return opcaoMenu;
 }
 
-int leitura(Filmes **inicio, Filmes **fim, Atores **inicio, Atores **fim)
+int leitura(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA)
 {
 	
 	FILE *arquivo;
 	char linha[600];
-	if((arquivo = fopen("c:\\resumo.txt", "r"))==NULL)
+	arquivo = fopen("resumo.txt", "r");
+	if(arquivo==NULL)
 	{
-		return 0
+		return 0;
 	}
 	else
 	{
 		while((fgets(linha, sizeof(linha), arquivo))!= NULL)
 		{
-			insercaoOrdenada(&inicioF, &fimF, &inicioA, &fimA, 'I', linha);
+			insercaoOrdenada(inicioF, fimF, inicioA, fimA, linha); // mudei o esquema do 'I' pq toda hora passaria como valor inicial.
 		}
 		fclose(arquivo);
 		return 1;
 	}
 }
 
-void insercaoOrdenada(Filmes **inicio, Filmes **fim, Atores **inicio, Atores **fim, char FilmesOuAtores?, char ValorASerInserido[600])
-{
-	if(strcmp(FilmesOuAtores,’I’)==1)
+void insercaoOrdenada(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, char ValorASerInserido[600])
 {
 	
 	}
