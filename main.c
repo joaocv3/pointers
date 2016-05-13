@@ -171,8 +171,53 @@ int leitura(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA)
 
 void insercaoOrdenada(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, char ValorASerInserido[600])
 {
+	Filmes *novoF = (Filmes*)malloc(sizeof(Filmes));
+	Atores *novoA = (Atores*)malloc(sizeof(Atores));
+	
+	char aux[100];
+	int i, j=0,k;//variaveis contadoras para percorrer a linha, a string até a virgula e a string auxiliar, respectivamente;
+	int status=0; //status para a inserção nos elementos do nodo
+	for(i=0; i<strlen(ValorASerInserido); i++){ //Percorre o vetor de chars
+		if(ValorASerInserido[i]==','){ 
+			k=0;	//zera o contador da string auxiliar
+			for(j; j<i ;j++){ // percorre da posicao inicial até a virgula
+				aux[k]=ValorASerInserido[j]; //insere char a char na string auxiliar
+				k++; //proxima posicao na string auxiliar
+			}
+			aux[k]='\0'; // encerra a string até a virgula
+			printf("\n%s", aux);
+			if(status=0)//guarda nome filme
+				strcpy(novoF->NomeFilmes, aux);		
+			else if (status==2) //ano
+				novoF->ano=atoi(aux);
+			else if (status==3) //diretor
+				strcpy(novoF->Diretores, aux);
+			else if (status>3){
+				AtoresFilmes *novoAF = (AtoresFilmes*)malloc(sizeof(AtoresFilmes));
+					
+				if (novoF->atores==NULL)
+					novoF->atores=novoAF;
+				else{
+					
+				}
+					
+			}
+			
+			j=i+1; //comeca a contagem da proxima string após a virgula 
+			status++; 
+		}
+	}
+
+
+	
+	if(1)
+	{
 	
 	}
 }
 
 
+filmes.c
+Abrir com
+1 de 2 itens
+filmes.cEspecificacao do Trabalho - 2016-2 (1).pdfExibindo filmes.c…
