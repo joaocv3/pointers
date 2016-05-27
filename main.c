@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <locale.h>
+#include <time.h>
+
 
 typedef struct nodoAtoresFilmes{struct nodoAtores *nome;struct nodoAtoresFilmes *prox;} AtoresFilmes; // Lista de atores de um filme
 typedef struct nodoFilmesAtores{struct nodoFilmes *nome;struct nodoFilmesAtores *prox;} FilmesAtores; // Lista de filmes de um ator
@@ -10,9 +12,21 @@ typedef struct nodoAtores{char NomeAtor[50];struct nodoAtores *prox; struct nodo
 typedef struct nodoFilmesPersonagens{struct nodoFilmes *filmes; struct nodoFilmesPersonagens *prox;} FilmesPersonagens; // lista de filmes em que determinados personagens apareceram
 typedef struct nodoPersonagens{char NomePersonagem[50]; struct nodoPersonagens *prox; struct nodoAtoresFilmes *atores; struct nodoFilmesPersonagens *filmes;} Personagens; // lista de personagens interpretados
 
-/* ---- MENU PRINCIPAL ---- */
+
+
+/* ---- MENUS ---- */
 
 int menu();
+
+void defineAtoresAlfabeticoOuReverso(Atores **inicioA, Atores **fimA); // Função que define se a lista de atores será mostrada em ordem alfabética ou alfabética reversa
+
+void defineFilmesAlfabeticoOuReverso(Filmes **inicioF, Filmes **fimF); // Função que define se a lista de filmes será mostrada em ordem alfabética ou alfabética reversa
+
+void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP);
+
+// Complemento para o menu principal
+
+void tituloProg();
 
 /* ----------------------- */
 
@@ -21,7 +35,7 @@ int menu();
 
 int leitura(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP);
 
-void InsercaoInicial(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP, char ValorASerInserido[600]);
+void InsercaoInicial(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP, char ValorASerInserido[2100]);
 
 /* ---------------------------------------------------------- */
 
@@ -47,7 +61,7 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 
 void InsereAtorListaAFilmes(AtoresFilmes **inicioAF, Atores **Pos );
 
-void InsereFilmesListaFAtor(FilmesAtores **inicioFA, Filmes **Pos , Atores **Ator);
+void InsereFilmesListaFAtor(FilmesAtores **inicioFA, Filmes **Pos );
 
 void InsereFilmesListaFPersonagens(FilmesPersonagens **inicioFP, Filmes **Pos );
 
@@ -57,7 +71,7 @@ void InsereAtorListaPersonagem(AtoresFilmes **inicioAF, Atores **ator);
 
 void InserePersonagemListaAtor(AtoresFilmes **inicioAF, Personagens **pos);
 
-void insercaoOrdenada(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, char ValorASerInserido[600]);
+void insercaoOrdenada(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, char ValorASerInserido[2100]);
 
 /* ---------------------------------------------------------- */
 
@@ -66,11 +80,8 @@ void insercaoOrdenada(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores 
 
 
 /* -------------------Funções LISTAR------------------------- */ 
-void defineFilmesAlfabeticoOuReverso(Filmes **inicioF, Filmes **fimF); // Função que define se a lista de filmes será mostrada em ordem alfabética ou alfabética reversa
 
 void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuReverso); // Função que mostra a lista de filmes
-
-void defineAtoresAlfabeticoOuReverso(Atores **inicioA, Atores **fimA); // Função que define se a lista de atores será mostrada em ordem alfabética ou alfabética reversa
 
 void listarFilmesAtorOrdemCronologica(Atores **inicioA);
 
@@ -85,10 +96,13 @@ void ListaPersonagens(Personagens **inicioP); // Função teste para visualizar a 
 
 int main()
 {
+	setlocale(LC_ALL,"Portuguese");
+	tituloProg();
+
 	Filmes *inicioF = NULL, *fimF = NULL; // Início/fim lista Filmes.
 	Atores *inicioA = NULL, *fimA = NULL; // Início/fim lista Atores.
 	Personagens *inicioP = NULL;
-	setlocale(LC_ALL,"Portuguese");
+	
 	if((leitura(&inicioF, &fimF, &inicioA, &fimA, &inicioP))==0) //verifica se conseguiu ler o arquivo
 	{
 		printf("\n Erro! Arquivo nÃ£o encontrado. \n");
@@ -104,6 +118,7 @@ int main()
 	}*/
 	while(escolha>0) //Escolha 0 == sair do programa
 	{
+		
 		switch (escolha)
 		{
 			case 1:
@@ -117,7 +132,7 @@ int main()
 				//buscaFilmeEspecifico(&inicioF); // teste
 				break;
 			case 4:
-
+				menuInserirFilme(&inicioF, &fimF, &inicioA, &fimA, &inicioP);
 				break;
 			case 5:
 				break;
@@ -134,10 +149,24 @@ int main()
 				break;		
 		}
 		escolha = menu();
+		tituloProg();
 	}
+	printf("\n Obrigado por utilizar o programa!");
+	printf("\n V.27052016");
+	printf("\n Au Revoir!");
 	
 }
 
+void tituloProg()
+{ 
+		printf("\t-------------------------------------------------------------------------------");
+		printf("\n\t-------------------------------------------------------------------------------");
+		printf("\n\t--------------------------- Banco de Dados de Filmes --------------------------\n");
+		printf("\t---------------------------- da aula de Programação 2 -------------------------\n");
+		printf("\t-------------------------------------------------------------------------------\n");
+		printf("\t-------------------------------------------------------------------------------\n\n\n");
+		
+}
 
 int menu()
 {
@@ -145,18 +174,18 @@ int menu()
 	
 	while(opcaoMenu!= -1 )
 	{
-		printf("\n 1: Listar todos os atores da lista em ordem alfabetica e alfabetica reversa ");
-		printf("\n 2:Listar todos os filmes de um determinado ator em ordem cronolÃ³gica.");
-		printf("\n 3:Listar todos os filmes em ordem alfabÃ©tica e alfabÃ©tica reversa.");
-		printf("\n 4:Inserir novos filmes");
-		printf("\n 5:Remover filmes");
-		printf("\n 6:Listar todos os filmes de um determinado diretor (ordem cronologica)");
-		printf("\n 7:Listar todos os atores que trabalharam diretamente com um determinado ator e o nome do filme no qual trabalharam juntos");
-		printf("\n 8:Listar todos os atores que trabalharam diretamente com um diretor e o nome do filme em que trabalharam juntos");
-		printf("\n 9:Listar todos os filmes que estÃ£o duplicados");
-		printf("\n 10:Listar todos os atores que interpretaram um determinado personagem, bem como o filme e o ano em que o fizeram");
-		printf("\n\n 0: Para sair do programa\n");
-		scanf("\n%d", &opcaoMenu);
+		printf("\n\t 1:Listar todos os atores da lista em ordem alfabetica e alfabetica reversa ");
+		printf("\n\t 2:Listar todos os filmes de um determinado ator em ordem cronológica.");
+		printf("\n\t 3:Listar todos os filmes em ordem alfabética e alfabética reversa.");
+		printf("\n\t 4:Inserir um novo filme");
+		printf("\n\t 5:Remover um filme");
+		printf("\n\t 6:Listar filmes de um determinado diretor (ordem cronológica)");
+		printf("\n\t 7:Listar atores que trabalharam diretamente com um determinado ator e o nome\n\t\t do filme no qual trabalharam juntos");
+		printf("\n\t 8:Listar atores que trabalharam diretamente com um diretor e o nome do filme\n\t\t em que trabalharam juntos");
+		printf("\n\t 9:Listar filmes que estão duplicados");
+		printf("\n\t 10:Listar os atores que interpretaram um determinado personagem");
+		printf("\n\n\t\t 0: Para sair do programa\n");
+		scanf("%5d", &opcaoMenu);
 		if(opcaoMenu<-1 || opcaoMenu>10)
 		{
 		
@@ -195,7 +224,7 @@ int leitura(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA,Per
 	}
 }
 
-void InsercaoInicial(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA,Personagens **inicioP, char ValorASerInserido[600])
+void InsercaoInicial(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA,Personagens **inicioP, char ValorASerInserido[2100])
 {
 	Filmes *novoF = NULL;
 	Atores *novoA = NULL;
@@ -219,7 +248,7 @@ void InsercaoInicial(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores *
 			k=0;	//zera o contador da string auxiliar
 			for(j; j<i ;j++){ // percorre da posicao inicial atÃ© a virgula
 			
-				aux[k]=ValorASerInserido[j]/*)*/; //insere char a char na string auxiliar
+				aux[k]=ValorASerInserido[j]; //insere char a char na string auxiliar
 
 				k++; //proxima posicao na string auxiliar
 				
@@ -349,7 +378,7 @@ void InsercaoInicial(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores *
 				}
 				
 				InsereAtorListaAFilmes(&novoF->atores, &novoA); // Insere o ator na lista AtoresFilmes do Filme que está sendo inserido.
-				InsereFilmesListaFAtor(&novoA->filmes,&novoF,&novoA); // Insere o filme na lista FilmesAtores do Ator que está sendo inserido (ou já existe).
+				InsereFilmesListaFAtor(&novoA->filmes,&novoF); // Insere o filme na lista FilmesAtores do Ator que está sendo inserido (ou já existe).
 				
 				if(flagPersonagem==1) // Se existir = na variável aux, significa que possui personagem.
 				{
@@ -456,34 +485,143 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 		}
 }
 
-void InsereFilmesListaFAtor(FilmesAtores **inicioFA, Filmes **Pos , Atores **Ator) // Insere no início da lista FilmesAtores na lista Atores * favor verificar em inserçãoInicial *
+void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP)
 {
-	FilmesAtores *ptaux,*ptnovo = (FilmesAtores *)malloc(sizeof(FilmesAtores));
-	ptnovo->nome = *Pos;
-	ptnovo->prox = *inicioFA;
-	if(*inicioFA==NULL || (ptnovo->nome->ano)<(*inicioFA)->nome->ano);
+	int flag=0,i=0,existe,existeDir,ano,j=0,anoAtual,qntA;
+	char compAno[4];
+	char nomeFilme[100], ValorASerInserido[2100];
+	char Diretores[10][100];
+	char nomeAtores[10][100];
+	
+	// Para comparar com o ano inserido:
+	
+	time_t rawtime;
+	struct tm *timeinfo;
+	time (&rawtime);
+	timeinfo = localtime(&rawtime);
+	anoAtual = timeinfo->tm_year+1900; 
+	
+	
+	system("cls");
+		printf("\n Digite o nome do filme que deseja inserir:\n ");
+		scanf(" %[^\n]",nomeFilme);
+		if(verificaFilmes(inicioF,nomeFilme)!=NULL) // Verifica se o filme já existe. Se sim, mostra a mensagem de erro e retorna ao menu principal...
+		{
+			printf("\n Erro, filme já existe. Retornando ao menu principal!\n");
+			system("pause");
+			system("cls");
+			return;
+		}
+		else //... Se não existe, concatena na string que será passada como parâmetro para a função de Inserção.
+		{
+			strcat(ValorASerInserido,nomeFilme);
+			strcat(ValorASerInserido, ",");
+		}
+		
+
+		printf("\n Digite o ano em que foi lançado o filme:\n");
+		scanf("%d",&ano);
+
+		while(ano<1895 || ano>anoAtual+5) // Verifica se o ano inserido condiz com o ano do primeiro filme lançado na história do cinema ou é menor do que ano atual + 5 anos.
+		{
+			printf("\n A data está fora da data de lançamento do primeiro filme da história ou\n excede o limite de cinco anos partindo do ano atual.\n Digite outro ano!");
+			scanf("%d",&ano);
+		}
+		
+		sprintf(compAno, "%i", ano); //Converte o inteiro para char;
+		
+		strcat(ValorASerInserido,compAno); // Concatena o ano e uma vírgula
+		strcat(ValorASerInserido, ",");
+		
+		printf("\n Deseja inserir o nome de algum diretor que participou do filme?(1/0)\n");
+		scanf("%d",&existeDir);
+		if(existeDir==1)
+		{
+			printf("\n Digite o nome do diretor do filme:\n");
+			scanf(" %[^\n]",Diretores[i]);
+			
+			printf("%s", Diretores[i]);
+			
+			strcat(ValorASerInserido,Diretores[i]);
+			
+			fflush(stdin);
+			
+			printf("\n Existe(m) outro(s) Diretor(es) que participou(participaram) do filme?(1/0)\n"); // Se existirem outros diretores, concatenará uma vírgula e irá ler o nome dos diretores, um por um.
+			scanf("%d", &existe);
+			if(existe==1) strcat(ValorASerInserido,",");
+			while(existe==1)
+			{
+				i++;
+				fflush(stdin);
+				printf("\n Digite o nome do proximo do diretor:\n");
+				scanf(" %[^\n]",Diretores[i]);
+				
+				strcat(ValorASerInserido,Diretores[i]);
+				strcat(ValorASerInserido,",");
+				
+				printf("\n Existe(m) outro(s) Diretor(es) que participaram do filme?(1/0)\n");
+				scanf(" %d", &existe);
+				if(existe!=0 && existe!=1) printf("\n Irei considerar isso como um sim!");
+			}
+		}
+
+		printf("\n Quantos atores/atrizes que trabalharam no filme desejas inserir? (max:10)\n"); // Máximo estabelecido de acordo com o arquivo resumo.txt
+		scanf(" %d", &qntA);
+		while(qntA<0 || qntA>20)
+		{
+			printf("\n Possivelmente esse não é o número correto de atores/atrizes que participaram do filme.\n Deseja inserir algum ator/atriz? (1/0)");
+			scanf(" %d",&qntA);
+		}
+		fflush(stdin);
+		for(j=0;j<qntA;j++)
+		{
+			strcat(ValorASerInserido,","); // Concatena sempre a vírgula antes pois o último ficará sem a vírgula ao final.
+			printf("\n Digite um ator/atriz que trabalhou no filme \n(Se deseja incluir um personagem especifico para o ator,\n insira NomeDoAtor=NomePersonagem, substituindo NomeDoAtor pelo nome do ator e Nome Personagem pelo nome do personagem): ");
+			scanf(" %[^\n]",nomeAtores[j]);
+			strcat(ValorASerInserido,nomeAtores[j]);
+			fflush(stdin);
+		
+		}
+	
+		
+		InsercaoInicial(inicioF,fimF,inicioA,fimA,inicioP,ValorASerInserido);
+		
+		printf("\n Pronto! A inserção está feita.\n");
+		
+		printf("\n Nome do filme para consultar: %s", nomeFilme);
+		
+		printf("\n\n Retornando ao menu principal!\n");
+		system("pause");
+		system("cls");
+		return;
+
+}
+
+
+void InsereFilmesListaFAtor(FilmesAtores **inicioFA, Filmes **Pos ) // Insere Filme na lista FilmesAtores do Ator
+{
+	if(*inicioFA==NULL || (*Pos)->ano<(*inicioFA)->nome->ano)
 	{
-		*inicioFA = ptnovo;
+		FilmesAtores *ptaux= (FilmesAtores *)malloc(sizeof(FilmesAtores));
+		ptaux->nome = *Pos;
+		ptaux->prox=*inicioFA;
+		*inicioFA=ptaux;
 		return;
 	}
-	ptaux = *inicioFA;
-	while(ptaux->prox!=NULL && (ptaux->prox->nome->ano)<(ptnovo->nome->ano))
-	{
-		ptaux = ptaux->prox;
-	}
-	ptnovo->prox=ptaux->prox;
-	ptaux->prox=ptnovo;
-	
+	InsereFilmesListaFAtor( &(*inicioFA)->prox, &(*Pos));
 }
+
 
 void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 {
-	int flag=1;
+	int flag=1,i=0,flagAno=0,j;
 	char nomeAtor[200];
+	char semAnoNome[20][200];
 	while(flag==1)
 	{
+		flag=1;
 		printf("\n Digite o nome do ator/atriz que deseja pesquisar:\n");
-		scanf("\n%[a-z A-Z]", nomeAtor);
+		scanf("\n%[a-z A-Z á é í ó ú Á É Í Ó Ú]", nomeAtor);
 		Atores *ptaux = verificaAtores(inicioA, nomeAtor);
 		if(ptaux!=NULL)
 		{
@@ -491,9 +629,25 @@ void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 			printf("\n Filmes dos quais participou:");
 			while(ptaux->filmes!=NULL)
 			{
-				printf("\n %s. Ano: %d",ptaux->filmes->nome->NomeFilmes, ptaux->filmes->nome->ano);
+			/*	if(ptaux->filmes->nome->ano=='') /*        Não encontrei filmes sem ano... */ // <----------- Isso ficará por enquanto pois esse caso não foi testado. (sinta-se livre para excluir, se achar necessário).
+			/*	{
+					flagAno=1;
+					strcpy(semAnoNome[i],ptaux->filmes->nome->NomeFilmes);
+					i++;
+				}
+				else*/
+			//	{
+					printf("\n %s. Ano: %d",ptaux->filmes->nome->NomeFilmes, ptaux->filmes->nome->ano);
+			//	}
 				ptaux->filmes = ptaux->filmes->prox;
 			}
+		/*	if(flagAno==1)
+			{
+				for(j=0;j<i;j++)
+				{
+					printf("\n %s.", semAnoNome[j]);
+				}
+			}*/
 		}
 		
 		printf("\n Deseja realizar outra consulta? (1/0)\n");
@@ -532,19 +686,6 @@ struct nodoFilmes *verificaFilmes(Filmes **inicioF, char nome[100]) // verificaç
 	return NULL;
 }
 
-struct nodoPersonagens *verificaPersonagens(Personagens **inicioP, char NomePersonagem[50]) // verificação se existe personagem. Se existe, retorna o personagem.
-{
-	Personagens *ptaux = *inicioP;
-	while(ptaux!=NULL)
-	{
-		if(strcmp(ptaux->NomePersonagem,NomePersonagem)==0)
-		{
-			return ptaux;
-		}
-		ptaux = ptaux->prox;
-	}
-	return NULL;
-}
 
 void InsereAtorListaAFilmes(AtoresFilmes **inicioAF, Atores **Pos ) // Insere no início da lista AtoresFilmes na lista Filmes * favor verificar em inserçãoInicial *
 {
@@ -705,6 +846,7 @@ void defineAtoresAlfabeticoOuReverso(Atores **inicioA, Atores **fimA) // Sub-men
 		}
 	}
 }
+
 void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuReverso) // Listagem de atores em ordem alfabética ou alfabética reversa
 {
 	int flag=0,count;
@@ -860,4 +1002,16 @@ void ListaPersonagens(Personagens **inicioP)
 	}
 }
 
-
+struct nodoPersonagens *verificaPersonagens(Personagens **inicioP, char NomePersonagem[50]) // verificação se existe personagem. Se existe, retorna o personagem.
+{
+	Personagens *ptaux = *inicioP;
+	while(ptaux!=NULL)
+	{
+		if(strcmp(ptaux->NomePersonagem,NomePersonagem)==0)
+		{
+			return ptaux;
+		}
+		ptaux = ptaux->prox;
+	}
+	return NULL;
+}
