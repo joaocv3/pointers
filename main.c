@@ -73,6 +73,10 @@ void InserePersonagemListaAtor(AtoresFilmes **inicioAF, Personagens **pos);
 
 void insercaoOrdenada(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, char ValorASerInserido[2100]);
 
+int tratarCharAcento(char nomeNodo[], char nome[]);
+
+void verificaAcentos(char nome[], int aux);
+
 /* ---------------------------------------------------------- */
 
 
@@ -436,7 +440,7 @@ struct nodoFilmes * insereOrdenadoNaListaDeFilmes(Filmes **inicioF, Filmes **fim
 		else 
 		{
 			Filmes *ptaux2 = *inicioF;
-			while(ptaux2->prox!=NULL && strcmp(ptaux2->prox->NomeFilmes,nome)<1)
+			while(ptaux2->prox!=NULL && (tratarCharAcento((ptaux2->prox->NomeFilmes),nome))<1)
 			{
 				ptaux2 = ptaux2->prox;
 			}
@@ -450,6 +454,39 @@ struct nodoFilmes * insereOrdenadoNaListaDeFilmes(Filmes **inicioF, Filmes **fim
 			return ptaux;		
 		}
 
+}
+
+// Trata as palavras com acento, inserindo normalmente, mas verificando sem acento
+int tratarCharAcento(char nomeNodo[], char nome[]){
+	int aux;
+	char testeNodo[100], teste[100]; //variaveis com o nome sem acento para comparacao
+	strcpy (testeNodo, nomeNodo);
+	strcpy (teste, nome);
+	
+	for (aux=0;aux<strlen(testeNodo); aux++)
+		verificaAcentos(testeNodo, aux);
+	
+	
+	for (aux=0;aux<strlen(teste); aux++)
+		verificaAcentos(teste, aux);
+
+	aux= strcmp(testeNodo, teste); 
+	return aux;  //retornar diretamente da funcao retornava erro: return strcmp(testeNodo, teste); 
+}
+
+
+// Verifica a presenca de um dos caracteres especiais
+void verificaAcentos(char nome[], int aux){
+	if(nome[aux]=='Ú')
+		nome[aux]= 'U';
+	else if((nome[aux]=='Í'))
+		nome[aux]= 'I';	
+	else if((nome[aux]=='Ó')||(nome[aux]=='Ô'))
+		nome[aux]= 'O';	
+	else if((nome[aux]=='Á')||(nome[aux]=='À'))
+		nome[aux]= 'A';
+	else if((nome[aux]=='É')||(nome[aux]=='Ê'))
+		nome[aux]= 'E';	
 }
 
 struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim , char nome[100]) // inserção ordenada por nome.
@@ -468,7 +505,7 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 		else 
 		{
 			Atores *ptaux2 = *inicio;
-			while(ptaux2->prox!=NULL && strcmp(ptaux2->prox->NomeAtor,nome)<1)
+			while(ptaux2->prox!=NULL && (tratarCharAcento((ptaux2->prox->NomeAtor),nome))<1)
 			{
 				ptaux2 = ptaux2->prox;
 			}
