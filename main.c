@@ -152,8 +152,9 @@ int main()
 				ListaPersonagens(&inicioP); // teste
 				break;		
 		}
-		escolha = menu();
 		tituloProg();
+		escolha = menu();
+		
 	}
 	printf("\n Obrigado por utilizar o programa!");
 	printf("\n V.27052016");
@@ -419,7 +420,7 @@ struct nodoFilmes * insereOrdenadoNaListaDeFilmes(Filmes **inicioF, Filmes **fim
 		strcpy(ptaux->NomeFilmes,nome);
 		ptaux->ano = ano;
 		strcpy(ptaux->Diretores, Diretores);
-		if(*inicioF==NULL || strcmp((*inicioF)->NomeFilmes,nome)>1)
+		if(*inicioF==NULL || strcmp((*inicioF)->NomeFilmes,nome)>0)
 		{
 			
 			ptaux->ant = NULL;
@@ -440,7 +441,7 @@ struct nodoFilmes * insereOrdenadoNaListaDeFilmes(Filmes **inicioF, Filmes **fim
 		else 
 		{
 			Filmes *ptaux2 = *inicioF;
-			while(ptaux2->prox!=NULL && (tratarCharAcento((ptaux2->prox->NomeFilmes),nome))<1)
+			while(ptaux2->prox!=NULL && (tratarCharAcento((ptaux2->prox->NomeFilmes),nome))<0)
 			{
 				ptaux2 = ptaux2->prox;
 			}
@@ -493,7 +494,7 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 {
 		Atores *ptaux = (Atores *)malloc(sizeof(Atores));
 		strcpy(ptaux->NomeAtor,nome);
-		if(*inicio==NULL || strcmp((*inicio)->NomeAtor,nome)>1)
+		if(*inicio==NULL || strcmp((*inicio)->NomeAtor,nome)>0)
 		{
 			ptaux->ant = NULL;
 			ptaux->prox = *inicio;
@@ -505,7 +506,7 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 		else 
 		{
 			Atores *ptaux2 = *inicio;
-			while(ptaux2->prox!=NULL && (tratarCharAcento((ptaux2->prox->NomeAtor),nome))<1)
+			while(ptaux2->prox!=NULL && (tratarCharAcento((ptaux2->prox->NomeAtor),nome))<0)
 			{
 				ptaux2 = ptaux2->prox;
 			}
