@@ -99,8 +99,13 @@ void ListaPersonagens(Personagens **inicioP); // Função teste para visualizar a 
 
 /* -------------------------------------------------------- */
 
+/* -------------------Funções REMOVER------------------------- */ 
+ 
+int deletaFilmes(Filmes **inicioF, char nomeFilme[]);
 
+void menuDeletaFilmes(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP);
 
+/* ----------------------------------------------------------- */ 
 
 int main()
 {
@@ -146,6 +151,7 @@ int main()
 				menuInserirFilme(&inicioF, &fimF, &inicioA, &fimA, &inicioP);
 				break;
 			case 5:
+				menuDeletaFilmes(&inicioF, &fimF, &inicioA, &fimA, &inicioP);	
 				break;
 			case 6:
 				break;
@@ -545,6 +551,85 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 			return ptaux;
 		}
 }
+
+
+int deletaFilmes(Filmes **inicioF, char nomeFilme[]){ //retorna -1 se filme não existe
+	Filmes *ptauxF = *inicioF;
+	AtoresFilmes *ptauxAF;
+	Atores *ptauxA;
+	FilmesAtores *ptauxFA;
+	char aa[100];
+	
+	while(ptauxF!=NULL)
+	{
+		if(strcmp(ptauxF->NomeFilmes,nomeFilme)==0)
+		{
+			ptauxF->ant->prox = ptauxF->prox; //desvincula o nodo a lista de filmes
+			ptauxF->prox->ant = ptauxF->ant;  
+			
+			ptauxAF = ptauxF->atores; // recebe o primeiro ator do filme
+			while(ptauxAF!=NULL)
+			{
+				ptauxA =ptauxAF->nome; // Ator do filme, na lista de atores
+				if (ptauxA->filmes->prox!=NULL){ // se o ator s[o tiver um filme, ignorar a exclusao, pois nao ha mais vinculo
+					if(strcmp(ptauxA->filmes->nome->NomeFilmes, nomeFilme)==0){// se o primeiro filme do ator eho removido
+						ptauxA->ant->prox = ptauxA->prox; //desvincula o nodo a lista de atores
+						ptauxA->prox->ant = ptauxA->ant;  
+					}else{
+						ptauxFA = ptauxA->filmes;
+						while(ptauxFA->prox!=NULL){
+							if(strcmp(nomeFilme, ptauxFA->nome->NomeFilmes)==0 ){// encontrado FA
+								printf("AAAAAAAAa");
+								ptauxFA->prox= ptauxFA->prox->prox;//desvincula
+							}
+							ptauxFA = ptauxFA->prox;
+						}
+					}
+				}else{// caso o  ator soh tehna um filme
+					ptauxA->ant->prox = ptauxA->prox; //desvincula o nodo a lista de atores
+					ptauxA->prox->ant = ptauxA->ant;  
+				}
+				ptauxAF = ptauxAF->prox;
+			}
+			return;
+		}
+		ptauxF = ptauxF->prox;
+	}
+	return -1;
+}	
+
+
+
+
+void menuDeletaFilmes(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP)
+{
+	char nomeFilme[100];
+	
+
+	
+	system("cls");
+		printf("\n Digite o nome do filme que deseja remover:\n ");
+		scanf(" %[^\n]",nomeFilme);
+		 
+		if(deletaFilmes(inicioF, nomeFilme)== -1) // Verifica se o filme existe. Se não, mostra a mensagem de erro e retorna ao menu principal...
+		{
+			printf("\n Erro, filme não existe. Retornando ao menu principal!\n");
+			system("pause");
+			system("cls");
+			return;
+		}
+		
+		printf("\n Pronto! A inserção está feita.\n");
+		
+		printf("\n Nome do filme para consultas: %s ", nomeFilme);
+		
+		printf("\n\n Retornando ao menu principal!\n");
+		system("pause");
+		system("cls");
+		return;
+
+}
+
 
 void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP)
 {
