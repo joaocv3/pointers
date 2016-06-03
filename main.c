@@ -442,6 +442,8 @@ struct nodoFilmes * insereOrdenadoNaListaDeFilmes(Filmes **inicioF, Filmes **fim
 		strcpy(ptaux->NomeFilmes,nome);
 		ptaux->ano = ano;
 		strcpy(ptaux->Diretores, Diretores);
+		char nomeNovo[100];
+			tratarAcento(nome, nomeNovo );
 		if(*inicioF==NULL || strcmp((*inicioF)->NomeFilmes,nome)>0)
 		{
 
@@ -463,8 +465,7 @@ struct nodoFilmes * insereOrdenadoNaListaDeFilmes(Filmes **inicioF, Filmes **fim
 		else
 		{
 			Filmes *ptaux2 = *inicioF;
-			char nomeNovo[100];
-			tratarAcento(nome, nomeNovo );
+			
 			while(ptaux2->prox!=NULL && (compararStringAcento((ptaux2->prox->NomeFilmes),nomeNovo))<0)
 			{
 				ptaux2 = ptaux2->prox;
@@ -534,7 +535,7 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 			char nomeNovo[100];
 			tratarAcento(nome, nomeNovo );
 			Atores *ptaux2 = *inicio;
-			while(ptaux2->prox!=NULL && (compararStringAcento((ptaux2->prox->NomeAtor),nome))<0)
+			while(ptaux2->prox!=NULL && (compararStringAcento((ptaux2->prox->NomeAtor),nomeNovo))<0)
 			{
 				ptaux2 = ptaux2->prox;
 			}
@@ -640,6 +641,10 @@ void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores 
 	char Diretores[100];
 	char nomeAtores[100];
 
+
+	strcpy(nomeFilme,"");
+	strcpy(ValorASerInserido,"");
+	strcpy(compAno,"");
 	// Para comparar com o ano inserido:
 
 	time_t rawtime;
@@ -756,7 +761,7 @@ void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores 
 
 			strcat(ValorASerInserido,nomeAtores);
 			strcpy(nomeAtores,"");
-			printf("\n%s", ValorASerInserido);
+
 			fflush(stdin);
 			printf("\n Deseja inserir mais algum ator/atriz que trabalhou no filme?(S/N)"); // Máximo estabelecido de acordo com o arquivo resumo.txt
 			simNao = getch();
@@ -861,6 +866,7 @@ void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 	char semAnoNome[20][200];
 	while(toupper(flag)=='S')
 	{
+		fflush(stdin);
 		system("cls");
 		printf("\n Digite o nome do ator/atriz que deseja pesquisar:\n");
 		i=0;
@@ -894,8 +900,9 @@ void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 		if(ptaux!=NULL)
 		{
 			printf("\n Nome: %s", ptaux->NomeAtor);
+			FilmesAtores *ptfilmes = ptaux->filmes;
 			printf("\n Filmes dos quais participou:");
-			while(ptaux->filmes!=NULL)
+			while(ptfilmes!=NULL)
 			{
 			/*	if(ptaux->filmes->nome->ano=='') /*        Não encontrei filmes sem ano... */ // <----------- Isso ficará por enquanto pois esse caso não foi testado. (sinta-se livre para excluir, se achar necessário).
 			/*	{
@@ -905,11 +912,11 @@ void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 				}
 				else*/
 			//	{
-					printf("\n %s. Ano: %d",ptaux->filmes->nome->NomeFilmes, ptaux->filmes->nome->ano);
+					printf("\n %s. Ano: %d",ptfilmes->nome->NomeFilmes, ptfilmes->nome->ano);
 			//	}
-				ptaux->filmes = ptaux->filmes->prox;
+				ptfilmes = ptfilmes->prox;
 			}
-		/*	if(flagAno==1)
+			/*	if(flagAno==1)
 			{
 				for(j=0;j<i;j++)
 				{
@@ -919,7 +926,7 @@ void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 		}
 		else
 		{
-			printf("\n Desculpe, o ator não foi encontrado!");
+			printf("\n Ator/atriz não encontrado!");
 		}
 		fflush(stdin);
 		printf("\n Deseja realizar outra consulta? (S/N)\n");
@@ -975,26 +982,30 @@ void defineFilmesAlfabeticoOuReverso(Filmes **inicioF, Filmes **fimF) // Sub-men
 	{
 		printf("\n Deseja listar os filmes em ordem alfabetica(N) ou alfabetica reversa(R)?\n(Se desejar, digite 0 para sair)");
 		flag = getch();
-		switch(flag)
+		switch(toupper(flag))
 		{
 			case('0'):
 			{
 				system("cls");
+				fflush(stdin);
 				return;
 				break;
 			}
 			case('N'):
 			{
 				ListaFilmesOrdemAlfabetica(inicioF,fimF,'N');
+				fflush(stdin);
 				break;
 			}
 			case('R'):
 			{
 				ListaFilmesOrdemAlfabetica(inicioF,fimF,'R');
+				fflush(stdin);
 				break;
 			}
 			default:
 				printf("\nDigite uma opção válida!");
+				fflush(stdin);
 				break;
 		}
 	}
@@ -1013,6 +1024,7 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 
 		while(flag<1 || flag>100)
 		{
+			fflush(stdin);
 			printf("\n Quantos? (entre 1 e 100)");
 			scanf(" %d",&flag);
 			if(flag<1 || flag > 100)
@@ -1085,26 +1097,30 @@ void defineAtoresAlfabeticoOuReverso(Atores **inicioA, Atores **fimA) // Sub-men
 		system("cls");
 		printf("\n Deseja listar os atores em ordem alfabetica(N) ou alfabetica reversa(R)?\n(Se desejar, digite 0 para sair)\n");
 		flag =  getch();
-		switch(flag)
+		switch(toupper(flag))
 		{
 			case('0'):
 			{
 				system("cls");
+				fflush(stdin);
 				return;
 				break;
 			}
 			case('N'):
 			{
 				ListaAtoresOrdemAlfabetica(inicioA,fimA,'N');
+				fflush(stdin);
 				break;
 			}
 			case('R'):
 			{
 				ListaAtoresOrdemAlfabetica(inicioA,fimA,'R');
+				fflush(stdin);
 				break;
 			}
 			default:
 				printf("\nDigite uma opção válida!");
+				fflush(stdin);
 				break;
 		}
 	}
@@ -1122,11 +1138,13 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 	{
 		while(flag<1 || flag>100)
 		{
+			fflush(stdin);
 			printf("\n Quantos? (entre 1 e 100)\n");
 			scanf(" %d", &flag);
 			if(flag<1 || flag > 100)
 				{
 					printf("\n Digite um número válido!");
+					fflush(stdin);
 				}
 		}
 	}
@@ -1182,6 +1200,7 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 			}
 		}
 	}
+	fflush(stdin);
 	system("pause");
 }
 
