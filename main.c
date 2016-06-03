@@ -572,9 +572,13 @@ int deletaFilmes(Filmes **inicioF, char nomeFilme[]){ //retorna -1 se filme não 
 	{
 		if(strcmp(ptauxF->NomeFilmes,nomeFilme)==0)
 		{
-			ptauxF->ant->prox = ptauxF->prox; //desvincula o nodo a lista de filmes
-			ptauxF->prox->ant = ptauxF->ant;
-
+			if(ptauxF->prox !=NULL){//caso nao seja o ultimo da lista
+				ptauxF->ant->prox = ptauxF->prox; //desvincula o nodo a lista de filmes
+				ptauxF->prox->ant = ptauxF->ant;
+			}else{ //caso seja o ultimo
+				ptauxF->ant->prox =NULL;	
+			}
+			
 			ptauxAF = ptauxF->atores; // recebe o primeiro ator do filme
 			while(ptauxAF!=NULL)
 			{
@@ -1045,7 +1049,6 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 				}
 		}
 	}
-
 	if(NormalOuReverso=='N')
 	{
 		count = 0;
@@ -1067,11 +1070,9 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			count++;
 			if(flag==count)
 			{
-				
 				count=0;
 			}
 		}
-
 	}
 	else if(NormalOuReverso=='R')
 	{
@@ -1097,7 +1098,9 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			}
 		}
 	}
+	
 	system("pause");
+
 }
 
 void defineAtoresAlfabeticoOuReverso(Atores **inicioA, Atores **fimA) // Sub-menu para definir qual tipo de listagem de atores será feita, com a opção 0 para sair
