@@ -1067,7 +1067,7 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			count++;
 			if(flag==count)
 			{
-				system("pause");
+				
 				count=0;
 			}
 		}
@@ -1093,12 +1093,11 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			count++;
 			if(flag==count)
 			{
-				system("pause");
 				flag=0;
 			}
 		}
 	}
-
+	system("pause");
 }
 
 void defineAtoresAlfabeticoOuReverso(Atores **inicioA, Atores **fimA) // Sub-menu para definir qual tipo de listagem de atores será feita, com a opção 0 para sair
