@@ -112,7 +112,7 @@ void listarFilmesDiretorOrdemCronologica(Diretores **inicioD); //
 
 void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuReverso); // Função que mostra a lista de atores
 
-void ListaPersonagens(Personagens **inicioP); // Função teste para visualizar a lista de personagens
+void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP); // Função teste para visualizar a lista de personagens
 
 /* -------------------------------------------------------- */
 
@@ -131,7 +131,7 @@ int main()
 	system("mode con:cols=100 lines=30");
 	system("cls");
 	system("title Banco de Filmes e Atores");
-	setlocale(LC_ALL,"Portuguese_Brazil");
+	setlocale(LC_ALL,"");
 	tituloProg();
 	printf("\n");
 
@@ -184,6 +184,7 @@ int main()
 			case 9:
 				break;
 			case 10:
+				ListaAtoresPersonagens(&inicioA, &inicioP);
 				break;
 		}
 		system("cls");
@@ -779,11 +780,15 @@ void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores 
 }
 
 
-void substituiString(char aux, char nova[], int i)
-{
+void substituiString(char aux, char nova[], int i)						// Função que substitui o valor de entrada do usuário pela letra digitada. Feito assim pois se o usuário digita uma palavra acentuada
+{																		// Com scanf ou gets não reconheceria, em virtude da tabela ASCII.
 	if(aux==-96)
 	{
 		nova[i] = 'á';
+	}
+	else if(aux==-75)
+	{
+		nova[i]='Á';
 	}
 	else if(aux==-126)
 	{
@@ -841,6 +846,8 @@ void substituiString(char aux, char nova[], int i)
 }
 
 
+ /* ------------------- Funções de inserção ordenada recursiva em listas encadeadas --------------------------------------*/
+
 void InsereFilmesListaFAtor(FilmesAtores **inicioFA, Filmes **Pos ) // Insere Filme na lista FilmesAtores do Ator
 {
 	if(*inicioFA==NULL || (*Pos)->ano<(*inicioFA)->nome->ano)
@@ -889,6 +896,9 @@ struct nodoDiretores *InsereDiretor(Diretores **inicioD, char NomeDir[50])
 	}
 	InsereDiretor(&(*inicioD)->prox,NomeDir);
 }
+
+ /* --------------------------------------------------------------------------------------------------------------*/
+
 
 struct nodoDiretores *verificaDiretores(Diretores **inicioD, char NomeDir[50])
 {
@@ -1083,11 +1093,11 @@ struct nodoFilmes *verificaFilmes(Filmes **inicioF, char nome[100]) // verificaç
 	{
 		if(strcmp(ptaux->NomeFilmes,nome)==0)
 		{
-			return ptaux;
+			return ptaux;			// Se encontra o filme, retorna ele, senão...
 		}
 		ptaux = ptaux->prox;
 	}
-	return NULL;
+	return NULL;					// Retorna Null
 }
 
 
@@ -1121,13 +1131,13 @@ void defineFilmesAlfabeticoOuReverso(Filmes **inicioF, Filmes **fimF) // Sub-men
 			}
 			case('N'):
 			{
-				ListaFilmesOrdemAlfabetica(inicioF,fimF,'N');
+				ListaFilmesOrdemAlfabetica(inicioF,fimF,'N'); // Chama a listagem como alfabético 'N'ormal
 				fflush(stdin);
 				break;
 			}
 			case('R'):
 			{
-				ListaFilmesOrdemAlfabetica(inicioF,fimF,'R');
+				ListaFilmesOrdemAlfabetica(inicioF,fimF,'R'); // Chama a listagem como alfabético 'R'ormal
 				fflush(stdin);
 				break;
 			}
@@ -1207,7 +1217,7 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			count++;
 			if(flag==count)
 			{
-				system("pause");
+				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				count=0;
 			}
 		}
@@ -1254,7 +1264,7 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			count++;
 			if(flag==count)
 			{
-				system("pause");
+				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				flag=0;
 			}
 		}
@@ -1283,13 +1293,13 @@ void defineAtoresAlfabeticoOuReverso(Atores **inicioA, Atores **fimA) // Sub-men
 			}
 			case('N'):
 			{
-				ListaAtoresOrdemAlfabetica(inicioA,fimA,'N');
+				ListaAtoresOrdemAlfabetica(inicioA,fimA,'N'); // Chama a listagem como alfabético 'N'ormal
 				fflush(stdin);
 				break;
 			}
 			case('R'):
 			{
-				ListaAtoresOrdemAlfabetica(inicioA,fimA,'R');
+				ListaAtoresOrdemAlfabetica(inicioA,fimA,'R'); // Chama a listagem como alfabético 'R'ormal
 				fflush(stdin);
 				break;
 			}
@@ -1345,7 +1355,7 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 
 			if(flag==count)
 			{
-				system("pause");
+				system("pause");  // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				count = 0;
 			}
 		}
@@ -1371,7 +1381,7 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 
 			if(flag==count)
 			{
-				system("pause");
+				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				count = 0;
 			}
 		}
@@ -1412,7 +1422,7 @@ void tratarAcento(char original[], char tratada[]) // Função que troca letras ac
 	int tamanhoString = strlen(original);
 	while(i<tamanhoString)
 	{
-		/*if(original[i]=='Ú'||(original[i]=='ú')||(original[i]=='ü'))
+		if(original[i]=='Ú'||(original[i]=='ú')||(original[i]=='ü'))
 			tratada[i]= 'U';
 		else if((original[i]=='Í')||(original[i]=='í')||(original[i]=='ï'))
 			tratada[i]= 'I';
@@ -1422,39 +1432,14 @@ void tratarAcento(char original[], char tratada[]) // Função que troca letras ac
 			tratada[i]= 'A';
 		else if((original[i]=='É')||(original[i]=='Ê')||(original[i]=='é')||(original[i]=='ê')||(original[i]=='ë') )
 			tratada[i]= 'E';
-		else*/
-			tratada[i] = toupper(original[i]);
-		i++;
-	}
-
-}
-
-/*
-
-
-void tratarAcento(char original[], char tratada[]) // Função que troca letras acentuadas por maiúsculas, para a comparação.
-{
-	
-	int i=0;
-	while(i<strlen(original))
-	{
-		if(original[i]=='Ú'||(original[i]=='ú')||(original[i]=='ü'))
-			tratada[i]= 'U';
-		else if((original[i]=='Í')||(original[i]=='í')||(original[i]=='ï'))
-			tratada[i]= 'I';
-		else if((original[i]=='Ó')||(original[i]=='Ô')||(original[i]=='ó')||(original[i]=='ô')||(original[i]=='ö'))
-			tratada[i]= 'O';
-		else if((original[i]=='Á')||(original[i]=='À')||(original[i]=='Â')||(original[i]=='á')||(original[i]=='à')||(original[i]=='â')||(original[i]=='ä'))
-			tratada[i]= 'A';
-		else if((original[i]=='É')||(original[i]=='Ê')||(original[i]=='é')||(original[i]=='ê')||(original[i]=='ë'))
-			tratada[i]= 'E';
 		else
 			tratada[i] = toupper(original[i]);
 		i++;
 	}
 
 }
-*/
+
+
 // Trata as palavras com acento, inserindo normalmente, mas verificando sem acento
 int compararStringAcento(char nomeNodo[], char nome[]){
 	int aux;
@@ -1511,21 +1496,37 @@ void InsereAtorListaPersonagem(AtoresFilmes **inicioAF, Atores **ator)
 	*inicioAF = ptaux;
 }
 
-void ListaPersonagens(Personagens **inicioP)
+void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP)
 {
 	Personagens *ptaux = *inicioP;
-	while(ptaux!=NULL)
+	char nome[50], escolha;
+	do
 	{
-		printf("\nPersonagem:%s\n",ptaux->NomePersonagem);
-		while(ptaux->atores!=NULL && ptaux->filmes!= NULL)
+		
+		printf("\n Qual o nome do Personagem que desejas pesquisar?\n");
+		scanf(" %[^\n]", nome);
+		
+		if((ptaux = verificaPersonagens(&(*inicioP),nome)) != NULL)
 		{
-			printf("Ator:%s Filme: %s Ano: %d\n", ptaux->atores->nome->NomeAtor, ptaux->filmes->filmes->NomeFilmes, ptaux->filmes->filmes->ano);
-			ptaux->atores = ptaux->atores->prox;
-			ptaux->filmes = ptaux->filmes->prox;
+			printf("\nPersonagem:%s\n",ptaux->NomePersonagem);
+			AtoresFilmes *atores = ptaux->atores; 
+			FilmesPersonagens *filmes = ptaux->filmes;
+			
+			while(atores!=NULL && filmes!= NULL)
+			{
+				printf("Ator:%s Filme: %s Ano: %d\n", atores->nome->NomeAtor, filmes->filmes->NomeFilmes, filmes->filmes->ano);
+				atores = atores->prox;
+				filmes = filmes->prox;
+			}
 		}
-		ptaux=ptaux->prox;
-		system("pause");
-	}
+		else
+		{
+			printf("\nO personagem não existe.");
+		}
+		printf("Deseja buscar outro personagem?(s/n)");
+		escolha = getch();
+		
+	}	while (toupper(escolha) != 'N');
 }
 
 struct nodoPersonagens *verificaPersonagens(Personagens **inicioP, char NomePersonagem[50]) // verificação se existe personagem. Se existe, retorna o personagem.
