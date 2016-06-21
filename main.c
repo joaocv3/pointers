@@ -1002,7 +1002,7 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 	AtoresFilmes *ptauxAF;
 	int counter = 1;
 	char nomeAtor[200];
-	char listaFilmes[40][200]; //salva os filmes em ordem
+	char listaFilmes[60][200]; //salva os filmes em ordem
 	char listaAtores[20][200]; //salva atores em ordem
 	int i;
 	
@@ -1010,10 +1010,12 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 	{
 		counter=0;
 		ptauxFA = ptauxA->filmes;	
-		while((ptauxFA!=NULL)||(counter!=10))
+		printf("ATOR: %s \n", ptauxA->NomeAtor);
+		while(ptauxFA!=NULL)
 		{
 			strcpy(listaFilmes[counter], ptauxFA->nome->NomeFilmes);
-			printf("A%d A\n", counter);
+			printf("A%d A??", counter);
+			printf("filme: %s??", ptauxFA->nome->NomeFilmes);
 			/*
 			ptauxAF= ptauxFA->nome->atores;
 			
