@@ -114,6 +114,8 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 
 void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP); // Função teste para visualizar a lista de personagens
 
+void ListarAtoresRelacionadosAtores(Atores **inicioA); // Funcao que lista atores e atores relacionados 
+
 /* -------------------------------------------------------- */
 
 
@@ -178,6 +180,7 @@ int main()
 				listarFilmesDiretorOrdemCronologica(&inicioD);
 				break;
 			case 7:
+				ListarAtoresRelacionadosAtores(&inicioA);
 				break;
 			case 8:
 				break;
@@ -992,6 +995,56 @@ void listarFilmesDiretorOrdemCronologica(Diretores **inicioD)
 		flag = getch();
 	}
 }
+
+void ListarAtoresRelacionadosAtores(Atores **inicioA){
+	Atores *ptauxA = *inicioA;
+	FilmesAtores *ptauxFA; 
+	AtoresFilmes *ptauxAF;
+	int counter = 1;
+	char nomeAtor[200];
+	char listaFilmes[40][200]; //salva os filmes em ordem
+	char listaAtores[20][200]; //salva atores em ordem
+	int i;
+	
+	while(ptauxA!=NULL)
+	{
+		counter=0;
+		ptauxFA = ptauxA->filmes;	
+		while((ptauxFA!=NULL)||(counter!=10))
+		{
+			strcpy(listaFilmes[counter], ptauxFA->nome->NomeFilmes);
+			printf("A%d A\n", counter);
+			/*
+			ptauxAF= ptauxFA->nome->atores;
+			
+			while(ptauxAF!=NULL){
+				if(strcmp(ptauxA->NomeAtor, ptauxAF->nome->NomeAtor) != 0 ){// compara nome do ator com ator do filmetrue return 0
+					strcat(listaAtores[counter], ptauxAF->nome->NomeAtor);//concatena
+				} 			
+				
+				ptauxAF = ptauxAF->prox;		
+			}
+			
+*/			
+			counter++;
+			ptauxFA = ptauxFA->prox;
+		}
+		
+/*		for (i=counter; i--; i+1>0){
+		
+			printf("Ator %s\n", ptauxA->NomeAtor);
+			printf("Filme: %s\n",listaFilmes[i]);	
+			if (i==1)
+			printf("TEUCU\n\n");
+		}
+
+*/		
+		ptauxA = ptauxA->prox;
+	}
+
+}
+
+
 
 void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 {
