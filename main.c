@@ -117,6 +117,9 @@ void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP); // Função 
 
 void ListarAtoresRelacionadosAtores(Atores **inicioA); // Funcao que lista atores e atores relacionados 
 
+void ListarDuplicados(Filmes **inicioF);
+
+
 /* -------------------------------------------------------- */
 
 
@@ -186,6 +189,7 @@ int main()
 			case 8:
 				break;
 			case 9:
+				ListarDuplicados(&inicioF);
 				break;
 			case 10:
 				ListaAtoresPersonagens(&inicioA, &inicioP);
@@ -783,6 +787,27 @@ void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores 
 
 }
 
+void ListarDuplicados(Filmes **inicioF)
+{
+    Filmes *ptauxA = *inicioF;
+   
+    if (ptauxA == NULL) //caso a lista esteja vazia
+       return; 
+       
+ 	printf ("Lista de filmes duplicados: \n");
+    while (ptauxA->prox != NULL) 
+    {
+       if ((strcmp(ptauxA->NomeFilmes, ptauxA->prox->NomeFilmes)==0)&&(ptauxA->ano==ptauxA->prox->ano)) //compara ano e nome do filme
+       {
+     	    printf("%s \n", ptauxA->NomeFilmes);
+         
+  	 	}
+        else
+        ptauxA = ptauxA->prox; 
+       
+    }
+    system("pause");
+}
 
 void substituiString(char aux, char nova[], int i)						// Função que substitui o valor de entrada do usuário pela letra digitada. Feito assim pois se o usuário digita uma palavra acentuada
 {																		// Com scanf ou gets não reconheceria, em virtude da tabela ASCII.
