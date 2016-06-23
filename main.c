@@ -12,7 +12,7 @@ typedef struct nodoFilmes{char NomeFilmes[100]; int ano; struct nodoDiretoresFil
 typedef struct nodoAtores{char NomeAtor[50];struct nodoAtores *prox; struct nodoAtores *ant; struct nodoFilmesAtores *filmes;} Atores; // Lista principal dos atores
 typedef struct nodoFilmesPersonagens{struct nodoFilmes *filmes; struct nodoFilmesPersonagens *prox;} FilmesPersonagens; // lista de filmes em que determinados personagens apareceram
 typedef struct nodoPersonagens{char NomePersonagem[50]; struct nodoPersonagens *prox; struct nodoAtoresFilmes *atores; struct nodoFilmesPersonagens *filmes;} Personagens; // lista de personagens interpretados
-typedef struct nodoAtoresRelacionados{char NomeAtorR[50]; struct nodoFilmesAtores *filme; struct nodoAtoresRelacionados *prox;} AtoresRelacionados; // lista de atores que atuaram diretamente com determinado ator
+typedef struct nodoAtoresRelacionados{char NomeAtorR[50]; struct nodoFilmesAtores *proxF; struct nodoAtoresRelacionados *proxA;} AtoresRelacionados; // lista de atores que atuaram diretamente com determinado ator
 
 
 
@@ -1022,6 +1022,15 @@ void listarFilmesDiretorOrdemCronologica(Diretores **inicioD)
 	}
 }
 
+struct nodoAtoresRelacionados InsereAtoresRelacionados(nodoAtoresRelacionados *ptauxA, Filmes **Pos )
+{
+	FilmesPersonagens *ptaux = (FilmesPersonagens *)malloc(sizeof(FilmesPersonagens));
+	ptaux->filmes = *Pos;
+	ptaux->prox = *inicioFP;
+	*inicioFP = ptaux;
+}
+
+
 void ListarAtoresRelacionadosAtores(Atores **inicioA){
 /*	Atores *ptauxA = *inicioA;
 	int counter = 1;
@@ -1035,7 +1044,9 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 	int i=0,flagAno=0,j;
 	char flag='S',aux;
 	char nomeAtor[200];
-	FilmesAtores *ptauxFA; 
+	Atores *ptauxA = *inicioA;
+	FilmesAtores *ptauxFA = ptauxA->filmes;
+	AtoresFilmes *ptauxAF;
 	AtoresRelacionados *ptauxAR=NULL;
 
 	while(toupper(flag)=='S')
@@ -1073,18 +1084,25 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 		Atores *ptauxA = verificaAtores(inicioA, nomeAtor);
 		if(ptauxA!=NULL)
 		{
+			
 			printf("\n Ator: %s", ptauxA->NomeAtor);
-			FilmesAtores *ptauxFA = ptauxA->filmes;
+			ptauxFA = ptauxA->filmes; 
+			
 			i=0;
 			while(ptauxFA!=NULL)
 			{
-			/*	if(ptauxRA==NULL){
-						
-				}*/	
-				Filmes  *ptaux = (Filmes *)malloc(sizeof(Filmes));
+				ptauxAF=ptauxFA->nome->atores; //recebe o ator a ser verificado
+		
+				while(ptauxAF->prox!= NULL){ //verifica se o ator eh o unico listado no filme
+					if(strcmp(ptauxAF->nome->NomeAtor,ptauxA->NomeAtor)!=0){//verifica se o ator nao [e o selecionado
+						CONTINUAR NA LINHA 1025
+					}
+					
+					ptauxAF= ptauxAF->prox;
+				}
 				ptauxFA = ptauxFA->prox;
 			}
-			
+			system("pause");
 			
 		}
 		else
@@ -1098,44 +1116,7 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 
 
 //----------------end novo
-/*	while(ptauxA!=NULL)
-	{
-		counter=0;
-		ptauxFA = ptauxA->filmes;	
-		printf("ATOR: %s \n", ptauxA->NomeAtor);
-		while(ptauxFA!=NULL)
-		{
-			strcpy(listaFilmes[counter], ptauxFA->nome->NomeFilmes);
-			printf("A%d A??", counter);
-			printf("filme: %s??", ptauxFA->nome->NomeFilmes);
-			
-			ptauxAF= ptauxFA->nome->atores;
-			
-			while(ptauxAF!=NULL){
-				if(strcmp(ptauxA->NomeAtor, ptauxAF->nome->NomeAtor) != 0 ){// compara nome do ator com ator do filmetrue return 0
-					strcat(listaAtores[counter], ptauxAF->nome->NomeAtor);//concatena
-				} 			
-				
-				ptauxAF = ptauxAF->prox;		
-			}
-			
-		
-			counter++;
-			ptauxFA = ptauxFA->prox;
-		}
-		
-		for (i=counter; i--; i+1>0){
-		
-			printf("Ator %s\n", ptauxA->NomeAtor);
-			printf("Filme: %s\n",listaFilmes[i]);	
-			if (i==1)
-			printf("TEUCU\n\n");
-		}
 
-	
-		ptauxA = ptauxA->prox;
-	}
-*/	
 }
 
 
