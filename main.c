@@ -12,7 +12,7 @@ typedef struct nodoFilmes{char NomeFilmes[100]; int ano; struct nodoDiretoresFil
 typedef struct nodoAtores{char NomeAtor[50];struct nodoAtores *prox; struct nodoAtores *ant; struct nodoFilmesAtores *filmes;} Atores; // Lista principal dos atores
 typedef struct nodoFilmesPersonagens{struct nodoFilmes *filmes; struct nodoFilmesPersonagens *prox;} FilmesPersonagens; // lista de filmes em que determinados personagens apareceram
 typedef struct nodoPersonagens{char NomePersonagem[50]; struct nodoPersonagens *prox; struct nodoAtoresFilmes *atores; struct nodoFilmesPersonagens *filmes;} Personagens; // lista de personagens interpretados
-typedef struct nodoAtoresRelacionados{char NomeAtorR[50]; struct nodoFilmesAtores *proxF; struct nodoAtoresRelacionados *proxA;} AtoresRelacionados; // lista de atores que atuaram diretamente com determinado ator
+typedef struct nodoAtoresRelacionados{char Nome[50]; struct nodoAtoresRelacionados *proxA; struct nodoAtoresRelacionados *proxF;} AtoresRelacionados; // lista de atores que atuaram diretamente com determinado ator
 
 
 
@@ -1022,12 +1022,44 @@ void listarFilmesDiretorOrdemCronologica(Diretores **inicioD)
 	}
 }
 
-struct nodoAtoresRelacionados InsereAtoresRelacionados(nodoAtoresRelacionados *ptauxA, Filmes **Pos )
+struct nodoAtoresRelacionados *InsereAtoresRelacionados( AtoresRelacionados **inicioAR, AtoresRelacionados **headAR, char filme[50], char ator[50])
 {
-	FilmesPersonagens *ptaux = (FilmesPersonagens *)malloc(sizeof(FilmesPersonagens));
-	ptaux->filmes = *Pos;
-	ptaux->prox = *inicioFP;
-	*inicioFP = ptaux;
+	AtoresRelacionados *ptauxAR= NULL;
+	AtoresRelacionados *novoFilme = (AtoresRelacionados *)malloc(sizeof(AtoresRelacionados));
+	strcpy(novoFilme->Nome, filme);	
+	if(*inicioAR==NULL){//em caso de nao ter nenhum ator relacionado cadastrado
+		AtoresRelacionados *novoA = (AtoresRelacionados *)malloc(sizeof(AtoresRelacionados));
+		strcpy(novoA->Nome, ator);
+		novoA->proxF = novoFilme;
+		novoA->proxA =NULL;			
+		(*headAR)= (*inicioAR) = novoA;
+	}else{
+		ptauxAR= (*inicioAR);
+		while(ptauxAR!=NULL){
+			if(strcmp((ptauxAR)->Nome, ator)==0){//o ator ja existe
+				
+				while(ptauxAR->proxF->proxF!=NULL){
+					
+					ptauxAR = ptauxAR->proxF;
+				}			
+				ptauxAR->proxF= novoFilme;// adiciona o filme
+				return ptauxAR;
+			}
+			*headAR=ptauxAR;//salva estado anterior
+			ptauxAR= (ptauxAR)->proxA;
+		}
+		ptauxAR= *headAR;//restaura estado
+		
+		//se executou até aqui, o ator ainda nao foi adicionado
+		AtoresRelacionados *novoA = (AtoresRelacionados *)malloc(sizeof(AtoresRelacionados));
+		strcpy(novoA->Nome, ator);
+		novoA->proxF = novoFilme;
+		novoA->proxA =NULL;	
+
+		ptauxAR->proxA = novoA;
+			
+	}
+	return ptauxAR;
 }
 
 
@@ -1047,7 +1079,7 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 	Atores *ptauxA = *inicioA;
 	FilmesAtores *ptauxFA = ptauxA->filmes;
 	AtoresFilmes *ptauxAF;
-	AtoresRelacionados *ptauxAR=NULL;
+	AtoresRelacionados *inicioAR=NULL, *headAR=NULL;//head é o cabecalho	
 
 	while(toupper(flag)=='S')
 	{
@@ -1094,14 +1126,34 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 				ptauxAF=ptauxFA->nome->atores; //recebe o ator a ser verificado
 		
 				while(ptauxAF->prox!= NULL){ //verifica se o ator eh o unico listado no filme
-					if(strcmp(ptauxAF->nome->NomeAtor,ptauxA->NomeAtor)!=0){//verifica se o ator nao [e o selecionado
-						CONTINUAR NA LINHA 1025
+					if(strcmp(ptauxAF->nome->NomeAtor,ptauxA->NomeAtor)!=0){//verifica se o ator nao eh o selecionado
+						InsereAtoresRelacionados(&inicioAR, &headAR, ptauxFA->nome->NomeFilmes, ptauxAF->nome->NomeAtor);		
 					}
-					
 					ptauxAF= ptauxAF->prox;
 				}
 				ptauxFA = ptauxFA->prox;
 			}
+		
+			AtoresRelacionados *ptauxAR;
+			ptauxAR = headAR = inicioAR;
+			while(ptauxAR!=NULL)
+			{
+				printf("|||Ator: %s: ", ptauxAR->Nome);
+				ptauxAR=ptauxAR->proxF; //recebe o primeiro filme
+		
+				while(ptauxAR!= NULL){ 
+				
+					printf("filme: %s, ", ptauxAR->Nome);
+					
+					
+					ptauxAR= ptauxAR->proxF;
+				}
+				headAR= headAR->proxA;
+				ptauxAR = headAR;
+			
+			}
+
+	
 			system("pause");
 			
 		}
