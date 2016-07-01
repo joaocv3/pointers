@@ -13,6 +13,7 @@ typedef struct nodoAtores{char NomeAtor[50];struct nodoAtores *prox; struct nodo
 typedef struct nodoFilmesPersonagens{struct nodoFilmes *filmes; struct nodoFilmesPersonagens *prox;} FilmesPersonagens; // lista de filmes em que determinados personagens apareceram
 typedef struct nodoPersonagens{char NomePersonagem[50]; struct nodoPersonagens *prox; struct nodoAtoresFilmes *atores; struct nodoFilmesPersonagens *filmes;} Personagens; // lista de personagens interpretados
 typedef struct nodoAtoresRelacionados{char Nome[50]; struct nodoAtoresRelacionados *proxA; struct nodoAtoresRelacionados *proxF;} AtoresRelacionados; // lista de atores que atuaram diretamente com determinado ator
+typedef struct nodoAtoresDiretor{char Nome[50]; struct nodoAtoresDiretor *proxA; struct nodoAtoresDiretor *proxF;} AtoresDiretor; // lista de atores que atuaram diretamente com determinado diretor
 
 
 
@@ -86,6 +87,9 @@ void InserePersonagemListaAtor(AtoresFilmes **inicioAF, Personagens **pos); // .
 
 void InsereAtoresRelacionados( AtoresRelacionados **inicioAR, AtoresRelacionados **headAR, char filme[50], char ator[50]);
 
+void InsereAtoresRelacionadosDiretores( AtoresDiretor **inicioAD, AtoresDiretor **headAD, char filme[50], char ator[50]);
+					
+
 /* ---------------------------------------------------------- */
 
 
@@ -121,6 +125,7 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA); // Funcao que lista atore
 
 void ListarDuplicados(Filmes **inicioF);
 
+void ListarAtoresDiretor(Diretores **inicioD);
 /* -------------------------------------------------------- */
 
 
@@ -188,6 +193,7 @@ int main()
 				ListarAtoresRelacionadosAtores(&inicioA);
 				break;
 			case 8:
+				ListarAtoresDiretor(&inicioD);
 				break;
 			case 9:
 				ListarDuplicados(&inicioF);
@@ -814,7 +820,8 @@ void substituiString(char aux, char nova[], int i)						// Função que substitu
 {																		// Com scanf ou gets não reconheceria, em virtude da tabela ASCII.
 	if(aux==-96)
 	{
-		nova[i] = 'á';
+		nova[i] = 
+		'á';
 	}
 	else if(aux==-75)
 	{
@@ -1023,6 +1030,7 @@ void listarFilmesDiretorOrdemCronologica(Diretores **inicioD)
 	}
 }
 
+
 void InsereAtoresRelacionados( AtoresRelacionados **inicioAR, AtoresRelacionados **headAR, char filme[50], char ator[50])
 {
 	AtoresRelacionados *ptauxAR= NULL;
@@ -1061,6 +1069,142 @@ void InsereAtoresRelacionados( AtoresRelacionados **inicioAR, AtoresRelacionados
 			
 	}
 	return;
+}
+
+void InsereAtoresRelacionadosDiretores( AtoresDiretor **inicioAD, AtoresDiretor **headAD, char filme[50], char ator[50])
+{
+	AtoresDiretor *ptauxAD= NULL;
+	AtoresDiretor *novoFilme = (AtoresDiretor *)malloc(sizeof(AtoresDiretor));
+	novoFilme->proxA = novoFilme->proxF = NULL; 
+	strcpy(novoFilme->Nome, filme);	//Cria o nodo filme e salva a string com o nome
+	
+	if(*inicioAD==NULL){//em caso de nao ter nenhum ator relacionado cadastrado
+		AtoresDiretor *novoA = (AtoresDiretor *)malloc(sizeof(AtoresDiretor));
+		strcpy(novoA->Nome, ator);
+		novoA->proxF = novoFilme;
+		novoA->proxA =NULL;			
+		(*headAD)= (*inicioAD) = novoA; //inicializa a lista	
+	}else{
+		ptauxAD= (*inicioAD);
+		while(ptauxAD!=NULL){
+			if(strcmp((ptauxAD)->Nome, ator)==0){//o ator ja existe
+				while(ptauxAD->proxF->proxF!=NULL){ //percorre até o ultimo filme do ator
+					ptauxAD = ptauxAD->proxF;
+				}			
+				ptauxAD->proxF->proxF= novoFilme;// adiciona o filme
+				return ;
+			}
+			*headAD=ptauxAD;//salva estado anterior
+			ptauxAD= (ptauxAD)->proxA;
+		}
+		ptauxAD= *headAD;//restaura estado
+		
+		//o ator ainda nao foi adicionado
+		AtoresDiretor *novoA = (AtoresDiretor *)malloc(sizeof(AtoresDiretor));
+		strcpy(novoA->Nome, ator);
+		novoA->proxF = novoFilme;
+		novoA->proxA =NULL;	
+
+		ptauxAD->proxA = novoA;
+	}
+	return;
+}
+
+
+void ListarAtoresDiretor(Diretores **inicioD){
+	int i=0,j;
+	char flag='S',aux;
+	char nomeDiretor[200];
+	Diretores *ptauxD;
+	FilmesAtores *ptauxFA;
+	AtoresFilmes *ptauxAF;
+	AtoresDiretor *inicioAD, *headAD;//head é o cabecalho	
+
+	while(toupper(flag)=='S')
+	{
+		ptauxD = *inicioD;
+		ptauxFA = ptauxD->filmes;
+		ptauxAF;
+		inicioAD=NULL, headAD=NULL;//head é o cabecalho	
+	
+		fflush(stdin);
+		system("cls");
+		printf("\n Digite o nome do diretor que deseja pesquisar:\n");
+		i=0;
+			while(i<100 && aux!='\n')
+			{
+				fflush(stdin);
+				aux = getch();
+
+				if(aux == 8 || aux==127)
+				{
+					if(i>0)
+					{
+						i--;
+						printf("%c", aux);
+					}
+				}
+				else if(aux == 13)
+				{
+					break;
+				}
+				else
+				{
+					substituiString(aux,nomeDiretor,i);
+					printf("%c",nomeDiretor[i]);
+					i++;
+				}
+
+			}
+			nomeDiretor[i] = '\0';
+			ptauxD = verificaDiretores(inicioD, nomeDiretor);
+		if(ptauxD!=NULL)// verifica se diretor existe
+		{
+			
+			printf("\n Diretor: %s\n", ptauxD->NomeDiretor);
+			ptauxFA = ptauxD->filmes; //Primeiro filme do ator escolhido
+			
+			i=0;
+			while(ptauxFA!=NULL)
+			{
+				ptauxAF=ptauxFA->nome->atores; //recebe o ator a ser verificado
+		
+				while(ptauxAF!= NULL){ 
+					InsereAtoresRelacionadosDiretores(&inicioAD, &headAD, ptauxFA->nome, ptauxAF->nome->NomeAtor);		
+					ptauxAF= ptauxAF->prox;
+				}
+				ptauxFA = ptauxFA->prox;
+			}
+		
+			//Imprime a lista
+			AtoresDiretor *ptauxAD;
+			ptauxAD = headAD = inicioAD;// Recebe a primeira posição
+			while(ptauxAD!=NULL)
+			{
+				printf("\nAtor: %s: ", ptauxAD->Nome);
+				ptauxAD=ptauxAD->proxF; //recebe o primeiro filme
+		
+		        printf("filmes: ");
+				while(ptauxAD!= NULL){ 
+				
+					printf(" %s,", ptauxAD->Nome);
+					ptauxAD= ptauxAD->proxF;
+				}
+				headAD= headAD->proxA; //
+				ptauxAD = headAD;
+			
+			}	
+			system("pause");
+		}
+		else
+		{
+			printf("\n Ator/atriz não encontrado!");
+		}
+		fflush(stdin);
+		printf("\n Deseja realizar outra consulta? (S/N)\n");
+		flag = getch();
+	}
+
 }
 
 void ListarAtoresRelacionadosAtores(Atores **inicioA){
@@ -1137,10 +1281,12 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 			{
 				printf("\nAtor: %s: ", ptauxAR->Nome);
 				ptauxAR=ptauxAR->proxF; //recebe o primeiro filme
-		
+		        
+		        printf("filmes:");
+		        
 				while(ptauxAR!= NULL){ 
 				
-					printf("filme: %s. ", ptauxAR->Nome);
+					printf("%s, ", ptauxAR->Nome);
 					ptauxAR= ptauxAR->proxF;
 				}
 				headAR= headAR->proxA; //
@@ -1158,11 +1304,7 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 		flag = getch();
 	}
 
-
-//----------------end novo
-
 }
-
 
 
 void listarFilmesAtorOrdemCronologica(Atores **inicioA)
