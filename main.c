@@ -230,7 +230,7 @@ int menu()
 	while(opcaoMenu!= -1 )
 	{
 		printf("\n\t  +-------------------------------------------------------------------------+");
-		printf("\n\t | 1:Listar todos os atores da lista em ordem alfabetica e alfabetica reversa ");
+		printf("\n\t | 1:Listar todos os atores da lista em ordem alfabética e alfabética reversa ");
 		printf("\n\t | 2:Listar todos os filmes de um determinado ator em ordem cronológica.");
 		printf("\n\t | 3:Listar todos os filmes em ordem alfabética e alfabética reversa.");
 		printf("\n\t | 4:Inserir um novo filme");
@@ -238,14 +238,14 @@ int menu()
 		printf("\n\t | 6:Listar filmes de um determinado diretor (ordem cronológica)");
 		printf("\n\t | 7:Listar atores que trabalharam  com um determinado ator");
 		printf("\n\t | 8:Listar atores que trabalharam  com um determinado diretor");
-		printf("\n\t | 9:Listar filmes que estãoo duplicados");
+		printf("\n\t | 9:Listar filmes que estão duplicados");
 		printf("\n\t | 10:Listar os atores que interpretaram um determinado personagem");
 		printf("\n\t | 11:Buscar filme específico");
 		printf("\n\t |\t 0: Para sair do programa");
 		printf("\n\t  +------------------------------+\n");
 
 		scanf("%d", &opcaoMenu);
-		if(opcaoMenu<-1 || opcaoMenu>10)
+		if(opcaoMenu<-1 || opcaoMenu>11)
 		{
 
 			printf("Digite uma opcao valida!");
@@ -271,9 +271,12 @@ int leitura(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA,Per
 	}
 	else
 	{
+		printf("\n\t\t Este programa é inteiramente Case Sensitive. Seja preciso em suas buscas!\n");
 		printf("\n\t\t\t\t\t+----------------+");
 		printf("\n\t\t\t\t\t| Inicializando  |");
 		printf("\n\t\t\t\t\t+----------------+");
+		printf("\n");
+		
 		while((fgets(linha, sizeof(linha), arquivo))!= NULL)
 		{
 
@@ -767,7 +770,7 @@ void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores 
 		while(toupper(simNao)=='S')
 		{
 			fflush(stdin);
-			strcat(ValorASerInserido,","); // Concatena sempre a vÃ­rgula antes pois o Ãºltimo ficará sem a vÃ­rgula ao final.
+			strcat(ValorASerInserido,","); // Concatena sempre a vÃ­rgula antes pois o último ficará sem a vÃ­rgula ao final.
 			printf("\n Digite um ator/atriz que trabalhou no filme \n"); 
 			i=0;
 			while(i<100 )
@@ -793,8 +796,6 @@ void menuInserirFilme(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores 
 					printf("%c",nomeAtores[i]);
 					i++;
 				}
-
-
 			}
 			nomeAtores[i] = '\0';
 
@@ -1020,12 +1021,20 @@ void listarFilmesDiretorOrdemCronologica(Diretores **inicioD)
 
 			}
 			Diretor[i] = '\0';
+			
 		Diretores *ptaux = verificaDiretores(&(*inicioD), Diretor);
 		if(ptaux!=NULL)
 		{
-			printf("\n Nome: %s", ptaux->NomeDiretor);
+			if(strcmp(Diretor,"")==0)
+			{
+				printf("\n Filmes sem diretor informado: ");
+			}
+			else
+			{
+				printf("\n Nome: %s", ptaux->NomeDiretor);
+				printf("\n Filmes que dirigiu:");
+			}
 			FilmesAtores *ptfilmes = ptaux->filmes;
-			printf("\n Filmes que dirigiu:");
 			i=0;
 			while(ptfilmes!=NULL)
 			{
@@ -1271,7 +1280,7 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 					if(i>0)
 					{
 						i--;
-						printf("\b %c");
+						printf("\b %c", aux);
 					}
 				}
 				else if(aux == 13)
@@ -1523,7 +1532,7 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			scanf(" %d",&flag);
 			if(flag<1 || flag > 100)
 				{
-					printf("\n Digite um nÃºmero válido!");
+					printf("\n Digite um número válido!");
 				}
 		}
 	}
@@ -1564,7 +1573,7 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			count++;
 			if(flag==count)
 			{
-				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo nÃºmero de nomes que o usuário colocou no input anteriormente
+				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				count=0;
 			}
 		}
@@ -1604,7 +1613,7 @@ void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuRe
 			count++;
 			if(flag==count)
 			{
-				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo nÃºmero de nomes que o usuário colocou no input anteriormente
+				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				flag=0;
 			}
 		}
@@ -1669,7 +1678,7 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 			scanf(" %d", &flag);
 			if(flag<1 || flag > 100)
 				{
-					printf("\n Digite um nÃºmero válido!");
+					printf("\n Digite um número válido!");
 					fflush(stdin);
 				}
 		}
@@ -1689,7 +1698,7 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 
 			if(flag==count)
 			{
-				system("pause");  // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo nÃºmero de nomes que o usuário colocou no input anteriormente
+				system("pause");  // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				count = 0;
 			}
 		}
@@ -1709,7 +1718,7 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 
 			if(flag==count)
 			{
-				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo nÃºmero de nomes que o usuário colocou no input anteriormente
+				system("pause"); // Pause mantido pois ele irá pausar assim que o contador estiver com o mesmo número de nomes que o usuário colocou no input anteriormente
 				count = 0;
 			}
 		}
@@ -1721,30 +1730,75 @@ void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuRe
 
 void buscaFilmeEspecifico(Filmes **inicioF) // Pesquisa para verificar filmes específcos.
 {
-	char nome[100];
-	printf("\n Digite o nome do filme que deseja pesquisar:");
-	scanf("\n%[a-z A-Z 1-9]", nome);
-	Filmes *ptaux = verificaFilmes(inicioF, nome);
-	if(ptaux!= NULL )
+	system("cls");
+	char nome[100], aux;
+	char escolha;
+	do
 	{
-		printf("\n Nome do Filme: %s", ptaux->NomeFilmes);
-		printf("\n Diretor do Filme: %s\n", ptaux->diretores->nome->NomeDiretor);
-		printf("\n %d", ptaux->ano);
-		if(ptaux->atores!=NULL && ptaux->atores->prox!=NULL) printf("\n Atores/Atrizes que participaram do filme:");
-		else if(ptaux->atores!=NULL) 
+		printf("\n Digite o nome do filme que deseja pesquisar:");
+		int i=0;
+		while(i<100 )
 		{
-			printf("\nAtor/Atriz que participou do filme:");
+			fflush(stdin);
+			aux = getch();
+			if(aux == 8 || aux==127)
+			{
+				if(i>0)
+				{
+					i--;
+					printf("\b %c",aux);
+				}
+			}
+			else if(aux == 13)
+			{
+				break;
+			}
+			else
+			{
+				substituiString(aux,nome,i);
+				printf("%c",nome[i]);
+				i++;
+			}
 		}
-		AtoresFilmes *ptaux1 = ptaux->atores;
+		nome[i]='\0';
+		Filmes *ptaux = verificaFilmes(inicioF, nome);
 		
-		while(ptaux1!=NULL)
+		if(ptaux!= NULL )
 		{
-			printf("\n%s",ptaux1->nome);
-			ptaux1 = ptaux1->prox;
+			DiretoresFilmes *ptdir = ptaux->diretores;
+			printf("\n Nome do Filme: %s", ptaux->NomeFilmes);
+			printf("\n Diretor");
+			if(ptdir->prox!= NULL)
+				printf("es");
+			printf(" do Filme:");			
+			while(ptdir!= NULL)
+			{
+				printf(" %s\n", ptdir->nome->NomeDiretor);
+				ptdir = ptdir->prox;
+			}
+			
+			printf("\n %d", ptaux->ano);
+			if(ptaux->atores!=NULL && ptaux->atores->prox!=NULL) printf("\n Atores/Atrizes que participaram do filme:");
+			else if(ptaux->atores!=NULL) 
+			{
+				printf("\nAtor/Atriz que participou do filme:");
+			}
+			AtoresFilmes *ptaux1 = ptaux->atores;
+			
+			while(ptaux1!=NULL)
+			{
+				printf("\n%s",ptaux1->nome);
+				ptaux1 = ptaux1->prox;
+			}
+			printf("\n");
+			system("pause");
 		}
-		system("pause");
-	}
-	else printf("Desculpe, esse filme não existe!");
+		else printf("\nDesculpe, esse filme não existe!\n");
+		
+		printf("Deseja buscar outro filme?(s/n)");
+		escolha = getch();
+		
+	}	while (toupper(escolha) != 'N');
 }
 
 
@@ -1835,6 +1889,7 @@ void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP)
 	char nome[50], escolha;
 	do
 	{
+		system("cls");
 		
 		printf("\n Qual o nome do Personagem que desejas pesquisar?\n");
 		scanf(" %[^\n]", nome);
@@ -1854,7 +1909,7 @@ void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP)
 		}
 		else
 		{
-			printf("\nO personagem nãoo existe.");
+			printf("\nO personagem não existe.\n");
 		}
 		printf("Deseja buscar outro personagem?(s/n)");
 		escolha = getch();
