@@ -113,19 +113,19 @@ int compararStringAcento(char nomeNodo[],char nome[]); //  Chama a função tratar
 
 void ListaFilmesOrdemAlfabetica(Filmes **inicioF, Filmes **fimF, char NormalOuReverso); // Função que mostra a lista de filmes
 
-void listarFilmesAtorOrdemCronologica(Atores **inicioA); // Função que lista os filmes do ator em ordem cronológica
+void listarFilmesAtorOrdemCronologica(Atores **inicioA, Filmes **inicioF); // Função que lista os filmes do ator em ordem cronológica
 
-void listarFilmesDiretorOrdemCronologica(Diretores **inicioD); //
+void listarFilmesDiretorOrdemCronologica(Diretores **inicioD,Filmes **inicioF); //
 
 void ListaAtoresOrdemAlfabetica(Atores **inicioA, Atores **fimA, char NormalOuReverso); // Função que mostra a lista de atores
 
-void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP); // Função teste para visualizar a lista de personagens
+void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP, Filmes **inicioF); // Função teste para visualizar a lista de personagens
 
 void ListarAtoresRelacionadosAtores(Atores **inicioA); // Funcao que lista atores e atores relacionados 
 
 void ListarDuplicados(Filmes **inicioF);
 
-void ListarAtoresDiretor(Diretores **inicioD);
+void ListarAtoresDiretor(Diretores **inicioD, Filmes **inicioF);
 /* -------------------------------------------------------- */
 
 
@@ -135,6 +135,8 @@ void ListarAtoresDiretor(Diretores **inicioD);
 int deletaFilmes(Filmes **inicioF, char nomeFilme[]);
 
 void menuDeletaFilmes(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP);
+
+void remover(Filmes **inicioF, char nome[100]);
 
 /* ----------------------------------------------------------- */
 
@@ -170,7 +172,7 @@ int main()
 				defineAtoresAlfabeticoOuReverso(&inicioA, &fimA);
 				break;
 			case 2:
-				listarFilmesAtorOrdemCronologica(&inicioA);
+				listarFilmesAtorOrdemCronologica(&inicioA, &inicioF);
 				break;
 			case 3:
 				defineFilmesAlfabeticoOuReverso(&inicioF, &fimF);
@@ -183,19 +185,19 @@ int main()
 				menuDeletaFilmes(&inicioF, &fimF, &inicioA, &fimA, &inicioP);
 				break;
 			case 6:
-				listarFilmesDiretorOrdemCronologica(&inicioD);
+				listarFilmesDiretorOrdemCronologica(&inicioD, &inicioF);
 				break;
 			case 7:
 				ListarAtoresRelacionadosAtores(&inicioA);
 				break;
 			case 8:
-				ListarAtoresDiretor(&inicioD);
+				ListarAtoresDiretor(&inicioD, &inicioF);
 				break;
 			case 9:
 				ListarDuplicados(&inicioF);
 				break;
 			case 10:
-				ListaAtoresPersonagens(&inicioA, &inicioP);
+				ListaAtoresPersonagens(&inicioA, &inicioP, &inicioF);
 				break;
 			case 11:
 				buscaFilmeEspecifico(&inicioF);
@@ -566,7 +568,7 @@ struct nodoAtores *insereOrdenadoNaListaDeAtores( Atores **inicio, Atores **fim 
 
 
 int deletaFilmes(Filmes **inicioF, char nomeFilme[]){ //retorna -1 se filme nãoo existe
-	Filmes *ptauxF = *inicioF;
+	Filmes *ptauxF = *inicioF, *rF;
 	AtoresFilmes *ptauxAF;
 	Atores *ptauxA;
 	FilmesAtores *ptauxFA;
@@ -576,13 +578,16 @@ int deletaFilmes(Filmes **inicioF, char nomeFilme[]){ //retorna -1 se filme nãoo
 	{
 		if(strcmp(ptauxF->NomeFilmes,nomeFilme)==0)
 		{
+			rF =ptauxF;
 			if(ptauxF->prox !=NULL){//caso nao seja o ultimo da lista
 				ptauxF->ant->prox = ptauxF->prox; //desvincula o nodo a lista de filmes
 				ptauxF->prox->ant = ptauxF->ant;
+
 			}else{ //caso seja o ultimo
 				ptauxF->ant->prox =NULL;	
 			}
-			
+			remover(inicioF, nomeFilme);
+
 			ptauxAF = ptauxF->atores; // recebe o primeiro ator do filme
 			while(ptauxAF!=NULL)
 			{
@@ -616,18 +621,59 @@ int deletaFilmes(Filmes **inicioF, char nomeFilme[]){ //retorna -1 se filme nãoo
 }
 
 
+void remover(Filmes **inicioF, char nome[100])
+{
+	Filmes *ptaux;
+	if(*inicioF==NULL)return;
+	if(strcmp((*inicioF)->NomeFilmes,nome)!=0)
+	{
+		remover(&(*inicioF)->prox,nome);
+		return;
+	}
+	ptaux=*inicioF;
+	(*inicioF)=(*inicioF)->prox;
+	free(ptaux);
+}
 
 
 void menuDeletaFilmes(Filmes **inicioF, Filmes **fimF, Atores **inicioA, Atores **fimA, Personagens **inicioP)
 {
-	char nomeFilme[100];
+	char nomeFilme[100],aux;
+	int i;
 
 
 
 	system("cls");
 		printf("\n Digite o nome do filme que deseja remover:\n ");
-		scanf(" %[^\n]",nomeFilme);
+		i=0;
+		while(i<100)
+			{
+				fflush(stdin);
+				aux = getch();
 
+				if(aux == 8 || aux==127)
+				{
+					if(i>0)
+					{
+						i--;
+						printf("\b %c",aux);
+					}
+				}
+				else if(aux == 13)
+				{
+					break;
+				}
+				else
+				{
+					substituiString(aux,nomeFilme,i);
+					printf("%c",nomeFilme[i]);
+					i++;
+				}
+
+
+			}
+			nomeFilme[i] = '\0';
+	
 		if(deletaFilmes(inicioF, nomeFilme)== -1) // Verifica se o filme existe. Se nãoo, mostra a mensagem de erro e retorna ao menu principal...
 		{
 			printf("\n Erro, filme nãoo existe. Retornando ao menu principal!\n");
@@ -835,7 +881,7 @@ void ListarDuplicados(Filmes **inicioF)
  	printf ("Lista de filmes duplicados: \n");
     while (ptauxA->prox != NULL) 	// A lista segue em sequência, pois já estará ordenada, da inserção, o que facilita o trabalho.
     {
-       if ((strcmp(ptauxA->NomeFilmes, ptauxA->prox->NomeFilmes)==0)&&(ptauxA->ano==ptauxA->prox->ano)) //compara ano e nome do filme
+       if ((strcmp(ptauxA->NomeFilmes, ptauxA->prox->NomeFilmes)==0)&&(ptauxA->ano==ptauxA->prox->ano) && verificaFilmes(inicioF,ptauxA->NomeFilmes)!=NULL) //compara ano e nome do filme
        {
      	    printf("%s \n", ptauxA->NomeFilmes);
          
@@ -983,7 +1029,7 @@ struct nodoDiretores *verificaDiretores(Diretores **inicioD, char NomeDir[50])
 	
 }
 
-void listarFilmesDiretorOrdemCronologica(Diretores **inicioD)
+void listarFilmesDiretorOrdemCronologica(Diretores **inicioD, Filmes **inicioF)
 {
 	int i=0,flagAno=0,j;
 	char flag='S',aux;
@@ -1038,15 +1084,18 @@ void listarFilmesDiretorOrdemCronologica(Diretores **inicioD)
 			i=0;
 			while(ptfilmes!=NULL)
 			{
-				if(ptfilmes->nome->ano==0) // Filmes sem ano...
+				if(verificaFilmes(inicioF, ptfilmes->nome->NomeFilmes)!=NULL)
 				{
-					flagAno=1;
-					strcpy(semAnoNome[i],ptfilmes->nome->NomeFilmes);
-					i++;
-				}
-				else
-				{
-					printf("\n %s. Ano: %d",ptfilmes->nome->NomeFilmes, ptfilmes->nome->ano); // FIlmes com ano...
+					if(ptfilmes->nome->ano==0) // Filmes sem ano...
+					{
+						flagAno=1;
+						strcpy(semAnoNome[i],ptfilmes->nome->NomeFilmes);
+						i++;
+					}
+					else
+					{
+						printf("\n %s. Ano: %d",ptfilmes->nome->NomeFilmes, ptfilmes->nome->ano); // FIlmes com ano...
+					}
 				}
 				ptfilmes = ptfilmes->prox;
 			}
@@ -1152,9 +1201,9 @@ void InsereAtoresRelacionadosDiretores( AtoresDiretor **inicioAD, AtoresDiretor 
 }
 
 
-void ListarAtoresDiretor(Diretores **inicioD){
+void ListarAtoresDiretor(Diretores **inicioD, Filmes **inicioF){
 	int i=0,j;
-	char flag='S',aux;
+	char flag='S',aux,flag1=0;
 	char nomeDiretor[200];
 	Diretores *ptauxD;
 	FilmesAtores *ptauxFA;
@@ -1170,6 +1219,7 @@ void ListarAtoresDiretor(Diretores **inicioD){
 	
 		fflush(stdin);
 		system("cls");
+		flag1=0;
 		printf("\n Digite o nome do diretor que deseja pesquisar:\n");
 		i=0;
 			while(i<100 && aux!='\n')
@@ -1202,44 +1252,51 @@ void ListarAtoresDiretor(Diretores **inicioD){
 		if(ptauxD!=NULL)// verifica se diretor existe
 		{
 			
-			printf("\n Diretor: %s\n", ptauxD->NomeDiretor);
 			ptauxFA = ptauxD->filmes; //Primeiro filme do ator escolhido
 			
 			i=0;
 			while(ptauxFA!=NULL)
 			{
-				ptauxAF=ptauxFA->nome->atores; //recebe o ator a ser verificado
-		
-				while(ptauxAF!= NULL){ 
-					InsereAtoresRelacionadosDiretores(&inicioAD, &headAD, ptauxFA->nome->NomeFilmes, ptauxAF->nome->NomeAtor);		
-					ptauxAF= ptauxAF->prox;
+				if(verificaFilmes(inicioF,ptauxFA->nome->NomeFilmes)!=NULL)
+				{
+					ptauxAF=ptauxFA->nome->atores; //recebe o ator a ser verificado
+			
+					while(ptauxAF!= NULL){
+					 
+						InsereAtoresRelacionadosDiretores(&inicioAD, &headAD, ptauxFA->nome->NomeFilmes, ptauxAF->nome->NomeAtor);		
+						ptauxAF= ptauxAF->prox;
+					}
+					flag1++;
 				}
 				ptauxFA = ptauxFA->prox;
 			}
 		
 			//Imprime a lista
-			AtoresDiretor *ptauxAD;
-			ptauxAD = headAD = inicioAD;// Recebe a primeira posição
-			while(ptauxAD!=NULL)
+			if(flag1>0)
 			{
-				printf("\nAtor: %s: ", ptauxAD->Nome);
-				ptauxAD=ptauxAD->proxF; //recebe o primeiro filme
-		
-		        printf("\nFilmes: ");
-				while(ptauxAD->proxF!= NULL){ 
-				
-					printf(" %s,", ptauxAD->Nome);
-					ptauxAD= ptauxAD->proxF;
-				}
-				
-				printf(" %s.\n",ptauxAD->Nome);
-					
-				headAD= headAD->proxA; //
-				ptauxAD = headAD;
+				printf("\n Diretor: %s\n", ptauxD->NomeDiretor);
+				AtoresDiretor *ptauxAD;
+				ptauxAD = headAD = inicioAD;// Recebe a primeira posição
+				while(ptauxAD!=NULL)
+				{
+					printf("\nAtor: %s: ", ptauxAD->Nome);
+					ptauxAD=ptauxAD->proxF; //recebe o primeiro filme
 			
-			}	
+			        printf("\nFilmes: ");
+					while(ptauxAD->proxF!= NULL){ 
+					
+						printf(" %s,", ptauxAD->Nome);
+						ptauxAD= ptauxAD->proxF;
+					}
+					
+					printf(" %s.\n",ptauxAD->Nome);
+						
+					headAD= headAD->proxA; //
+					ptauxAD = headAD;
+				}	
+			}
 		}
-		else
+		else if(flag1==0)
 		{
 			printf("\n Diretor não encontrado!");
 		}
@@ -1356,7 +1413,7 @@ void ListarAtoresRelacionadosAtores(Atores **inicioA){
 }
 
 
-void listarFilmesAtorOrdemCronologica(Atores **inicioA)
+void listarFilmesAtorOrdemCronologica(Atores **inicioA, Filmes **inicioF)
 {
 	int i=0,flagAno=0,j;
 	char flag='S',aux;
@@ -1403,15 +1460,18 @@ void listarFilmesAtorOrdemCronologica(Atores **inicioA)
 			i=0;
 			while(ptfilmes!=NULL)
 			{
-				if(ptfilmes->nome->ano==0) // Filmes sem ano...
+				if(verificaFilmes(inicioF, ptfilmes->nome->NomeFilmes)!=NULL)
 				{
-					flagAno=1;
-					strcpy(semAnoNome[i],ptfilmes->nome->NomeFilmes);
-					i++;
-				}
-				else
-				{
-					printf("\n %s. Ano: %d",ptfilmes->nome->NomeFilmes, ptfilmes->nome->ano); // FIlmes com ano...
+					if(ptfilmes->nome->ano==0) // Filmes sem ano...
+					{
+						flagAno=1;
+						strcpy(semAnoNome[i],ptfilmes->nome->NomeFilmes);
+						i++;
+					}
+					else
+					{
+						printf("\n %s. Ano: %d",ptfilmes->nome->NomeFilmes, ptfilmes->nome->ano); // FIlmes com ano...
+					}
 				}
 				ptfilmes = ptfilmes->prox;
 			}
@@ -1883,9 +1943,10 @@ void InsereAtorListaPersonagem(AtoresFilmes **inicioAF, Atores **ator)
 	*inicioAF = ptaux;
 }
 
-void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP)
+void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP, Filmes **inicioF)
 {
 	Personagens *ptaux = *inicioP;
+	int flag=0;
 	char nome[50], escolha;
 	do
 	{
@@ -1893,19 +1954,31 @@ void ListaAtoresPersonagens(Atores **inicioA, Personagens **inicioP)
 		
 		printf("\n Qual o nome do Personagem que desejas pesquisar?\n");
 		scanf(" %[^\n]", nome);
+		flag=0;
 		
 		if((ptaux = verificaPersonagens(&(*inicioP),nome)) != NULL)
 		{
-			printf("\nPersonagem:%s\n",ptaux->NomePersonagem);
-			AtoresFilmes *atores = ptaux->atores; 
-			FilmesPersonagens *filmes = ptaux->filmes;
-			
-			while(atores!=NULL && filmes!= NULL)
+			FilmesPersonagens *filmes1 = ptaux->filmes;
+			while(filmes1!=NULL)
 			{
-				printf("Ator:%s Filme: %s Ano: %d\n", atores->nome->NomeAtor, filmes->filmes->NomeFilmes, filmes->filmes->ano);
-				atores = atores->prox;
-				filmes = filmes->prox;
+				if(verificaFilmes(inicioF,filmes1->filmes->NomeFilmes)!=NULL)
+					flag++;
+				filmes1 = filmes1->prox;
 			}
+			if(flag>0)
+			{
+				printf("\nPersonagem:%s\n",ptaux->NomePersonagem);
+				AtoresFilmes *atores = ptaux->atores; 
+				FilmesPersonagens *filmes = ptaux->filmes;
+				
+				while(atores!=NULL && verificaFilmes(inicioF,filmes->filmes->NomeFilmes)!=NULL)
+				{
+					printf("Ator:%s Filme: %s Ano: %d\n", atores->nome->NomeAtor, filmes->filmes->NomeFilmes, filmes->filmes->ano);
+					atores = atores->prox;
+					filmes = filmes->prox;
+				}
+			}
+			else printf("\nO personagem não possui filmes em sua lista.\n");
 		}
 		else
 		{
